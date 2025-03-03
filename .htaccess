@@ -1,0 +1,14 @@
+RewriteEngine On
+
+# Redirect HTTPS
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} off
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# Blokir Akses ke File Sensitif
+<FilesMatch "(\.env|composer\.json|composer\.lock|\.git|\.htaccess)">
+  Order allow,deny
+  Deny from all
+</FilesMatch>

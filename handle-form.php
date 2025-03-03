@@ -6,6 +6,10 @@ use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\OAuth;
 use League\OAuth2\Client\Provider\Google;
 
+// Load .env file
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = htmlspecialchars($_POST['name']);
     $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
@@ -15,11 +19,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Invalid email address.");
     }
 
-    // Gmail OAuth 2.0 Credentials
-    $clientId = getenv('409821833872-go2fhgqoopsccl9blu9lilflvvao6ega.apps.googleusercontent.com');
-    $clientSecret = getenv('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');
-    $refreshToken = getenv('1//04jzessZLguFzCgYIARAAGAQSNwF-L9IrvLb3TxaDnmVq3wh9Wa39S31Qyk5LZ9cy_HFCRBz8oXUoegqK3wvpU9HP3P14kYtSZ_I');
-    $gmailAccount = 'yasintaziawan@gmail.com'; // Gmail account
+    // Gmail OAuth 2.0 Credentials (dari .env)
+    $clientId = $_ENV['GOOGLE_CLIENT_ID'];
+    $clientSecret = $_ENV['GOOGLE_CLIENT_SECRET'];
+    $refreshToken = $_ENV['GOOGLE_REFRESH_TOKEN'];
+    $gmailAccount = $_ENV['GMAIL_ACCOUNT'];
+
+    // Penerima
+    $recipientEmail = $_ENV['RECIPIENT_EMAIL'];
+    $recipientName = $_ENV['RECIPIENT_NAME'];
 
     $mail = new PHPMailer(true);
 
@@ -46,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Send email to recipient
         $mail->setFrom($gmailAccount, 'Contact Form');
-        $mail->addAddress('fatonyahmadfauzi@gmail.com', 'Fatony Ahmad Fauzi');
+        $mail->addAddress($recipientEmail, $recipientName);
         $mail->isHTML(true);
         $mail->Subject = 'Contact Form Submission';
         $mail->Body    = "
@@ -71,10 +79,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <hr>
             <p>We'll get back to you shortly!</p>
             <p>Best regards,</p>
-            <p><strong>Fatony Ahmad Fauzi</strong></p>
+            <p><strong>$recipientName</strong></p>
         ";
         $mail->send();
 
+        echo "Email successfully sent!";
         exit;
     } catch (Exception $e) {
         error_log("Email sending failed: {$mail->ErrorInfo}");
