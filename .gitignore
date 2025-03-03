@@ -1,0 +1,29 @@
+# Ignore vendor folder (dependencies installed via Composer)
+vendor/
+
+# Ignore Composer lock file
+composer.lock
+
+# Ignore environment configuration
+.env
+
+# Ignore temporary files and logs
+*.log
+*.cache
+*.tmp
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.bak
+
+# Ignore compiled CSS/JS files (if applicable)
+*.min.css
+*.min.js
+
+# Ignore deployment artifacts
+node_modules/
+dist/
+build/
