@@ -1,3 +1,6 @@
+# Ignore vendor folder (dependencies installed via Composer)
+vendor/
+
 # Ignore temporary files and logs
 *.log
 *.cache
