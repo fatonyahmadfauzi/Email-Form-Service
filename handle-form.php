@@ -1,4 +1,15 @@
 <?php
+// Header CORS
+header("Access-Control-Allow-Origin: *"); // Mengizinkan semua domain. Anda bisa mengganti * dengan domain tertentu, misalnya: https://example.com
+header("Access-Control-Allow-Methods: POST, OPTIONS"); // Mengizinkan metode POST dan OPTIONS
+header("Access-Control-Allow-Headers: Content-Type, Authorization"); // Mengizinkan header tertentu
+
+// Jika OPTIONS request, keluar lebih awal
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
 require 'vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
