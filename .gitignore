@@ -1,5 +1,5 @@
-# Ignore vendor folder (dependencies installed via Composer)
-vendor/
+# Ignore environment configuration
+.env
 
 # Ignore temporary files and logs
 *.log
