@@ -1,105 +1,137 @@
 <?php
-// Header CORS
-header("Access-Control-Allow-Origin: *"); // Mengizinkan semua domain. Anda bisa mengganti * dengan domain tertentu, misalnya: https://example.com
-header("Access-Control-Allow-Methods: POST, OPTIONS"); // Mengizinkan metode POST dan OPTIONS
-header("Access-Control-Allow-Headers: Content-Type, Authorization"); // Mengizinkan header tertentu
+// ==============================================
+// 1. Konfigurasi Awal & Error Handling
+// ==============================================
+error_reporting(E_ALL);
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
 
-// Jika OPTIONS request, keluar lebih awal
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
+header("Content-Type: application/json");
+
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
 }
 
-require 'vendor/autoload.php';
+// ==============================================
+// 2. Load Dependencies
+// ==============================================
+require __DIR__ . '/vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\OAuth;
 use League\OAuth2\Client\Provider\Google;
 
-// Load .env file
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->load();
+// ==============================================
+// 3. Main Logic
+// ==============================================
+try {
+    // Validasi request method
+    if ($_SERVER["REQUEST_METHOD"] != "POST") {
+        throw new Exception("Method not allowed", 405);
+    }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Validasi input
+    $requiredFields = ['name', 'email', 'message'];
+    foreach ($requiredFields as $field) {
+        if (empty($_POST[$field])) {
+            throw new Exception("Missing required field: $field", 400);
+        }
+    }
+
     $username = htmlspecialchars($_POST['name']);
     $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
     $message = htmlspecialchars($_POST['message']);
 
     if (!$email) {
-        die("Invalid email address.");
+        throw new Exception("Invalid email format", 400);
     }
 
-    // Gmail OAuth 2.0 Credentials (dari .env)
-    $clientId = $_ENV['GOOGLE_CLIENT_ID'];
-    $clientSecret = $_ENV['GOOGLE_CLIENT_SECRET'];
-    $refreshToken = $_ENV['GOOGLE_REFRESH_TOKEN'];
-    $gmailAccount = $_ENV['GMAIL_ACCOUNT'];
-
-    // Penerima
-    $recipientEmail = $_ENV['RECIPIENT_EMAIL'];
-    $recipientName = $_ENV['RECIPIENT_NAME'];
-
+    // ==============================================
+    // 4. Email Configuration
+    // ==============================================
     $mail = new PHPMailer(true);
 
-    try {
-        // Server settings
-        $mail->isSMTP();
-        $mail->Host       = 'smtp.gmail.com';
-        $mail->SMTPAuth   = true;
-        $mail->AuthType   = 'XOAUTH2';
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = 587;
+    // Setup Google OAuth Provider
+    $provider = new Google([
+        'clientId'     => $_ENV['GOOGLE_CLIENT_ID'],
+        'clientSecret' => $_ENV['GOOGLE_CLIENT_SECRET']
+    ]);
 
-        // OAuth 2.0 Configuration
-        $mail->setOAuth(new OAuth([
-            'provider' => new Google([
-                'clientId'     => $clientId,
-                'clientSecret' => $clientSecret,
-            ]),
-            'clientId'     => $clientId,
-            'clientSecret' => $clientSecret,
-            'refreshToken' => $refreshToken,
-            'userName'     => $gmailAccount,
-        ]));
+    // Konfigurasi OAuth
+    $mail->setOAuth(new OAuth([
+        'provider'     => $provider,
+        'clientId'     => $_ENV['GOOGLE_CLIENT_ID'],
+        'clientSecret' => $_ENV['GOOGLE_CLIENT_SECRET'],
+        'refreshToken' => $_ENV['GOOGLE_REFRESH_TOKEN'],
+        'userName'     => $_ENV['GMAIL_ACCOUNT']
+    ]));
 
-        // Send email to recipient
-        $mail->setFrom($gmailAccount, 'Contact Form');
-        $mail->addAddress($recipientEmail, $recipientName);
-        $mail->isHTML(true);
-        $mail->Subject = 'Contact Form Submission';
-        $mail->Body    = "
-            <h3>Contact Form Submission</h3>
-            <p><strong>Name:</strong> $username</p>
-            <p><strong>Email:</strong> $email</p>
-            <p><strong>Message:</strong></p>
-            <p>$message</p>
-        ";
-        $mail->send();
+    // Server settings
+    $mail->isSMTP();
+    $mail->Host       = 'smtp.gmail.com';
+    $mail->SMTPAuth   = true;
+    $mail->AuthType   = 'XOAUTH2';
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port       = 587;
 
-        // Send confirmation email to the user
-        $mail->clearAddresses(); // Clear previous recipients
-        $mail->addAddress($email, $username);
-        $mail->Subject = 'Thank You for Your Submission!';
-        $mail->Body    = "
-            <h2>Hi $username,</h2>
-            <p>Thank you for reaching out! Your form has been successfully submitted. Here's what you sent us:</p>
-            <hr>
-            <p><strong>Your Message:</strong></p>
-            <blockquote>$message</blockquote>
-            <hr>
-            <p>We'll get back to you shortly!</p>
-            <p>Best regards,</p>
-            <p><strong>$recipientName</strong></p>
-        ";
-        $mail->send();
+    // ==============================================
+    // 5. Kirim Email ke Penerima
+    // ==============================================
+    $mail->setFrom($_ENV['GMAIL_ACCOUNT'], 'Contact Form');
+    $mail->addAddress($_ENV['RECIPIENT_EMAIL'], $_ENV['RECIPIENT_NAME']);
+    $mail->isHTML(true);
+    $mail->Subject = 'New Contact Form Submission';
 
-        echo "Email successfully sent!";
-        exit;
-    } catch (Exception $e) {
-        error_log("Email sending failed: {$mail->ErrorInfo}");
-        echo "An error occurred. Please try again later.";
-    }
-} else {
-    echo "Invalid request.";
+    $mail->Body = sprintf(
+        '<h3>New Message from %s</h3>
+        <p><strong>Email:</strong> %s</p>
+        <p><strong>Message:</strong></p>
+        <div style="border-left: 3px solid #ccc; padding-left: 1rem; margin: 1rem 0;">
+            %s
+        </div>',
+        $username,
+        $email,
+        nl2br($message)
+    );
+
+    $mail->send();
+
+    // ==============================================
+    // 6. Kirim Email Konfirmasi
+    // ==============================================
+    $mail->clearAddresses();
+    $mail->addAddress($email, $username);
+    $mail->Subject = 'Thank You for Contacting Us';
+
+    $mail->Body = sprintf(
+        '<h2>Hi %s,</h2>
+        <p>We have received your message:</p>
+        <blockquote style="margin: 1rem 0; padding: 1rem; background: #f8f9fa; border-left: 3px solid #007bff;">
+            %s
+        </blockquote>
+        <p>We will respond within 24-48 business hours.</p>',
+        $username,
+        nl2br($message)
+    );
+
+    $mail->send();
+
+    // Response sukses
+    echo json_encode([
+        'status' => 'success',
+        'message' => 'Email successfully sent to both parties'
+    ]);
+} catch (Exception $e) {
+    // Error handling
+    error_log("[EMAIL ERROR] " . $e->getMessage());
+    http_response_code($e->getCode() ?: 500);
+    echo json_encode([
+        'status' => 'error',
+        'message' => $e->getMessage(),
+        'code' => $e->getCode()
+    ]);
 }
