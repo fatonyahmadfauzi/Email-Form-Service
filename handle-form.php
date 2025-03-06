@@ -34,17 +34,20 @@ try {
         throw new Exception("Invalid request method");
     }
 
+    // Parse JSON payload
+    $input = json_decode(file_get_contents('php://input'), true);
+
     // Input validation
     $requiredFields = ['name', 'email', 'message'];
     foreach ($requiredFields as $field) {
-        if (empty($_POST[$field])) {
+        if (empty($input[$field])) {
             throw new Exception("All fields are required");
         }
     }
 
-    $name = htmlspecialchars($_POST['name'], ENT_QUOTES, 'UTF-8');
-    $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
-    $message = htmlspecialchars($_POST['message'], ENT_QUOTES, 'UTF-8');
+    $name = htmlspecialchars($input['name'], ENT_QUOTES, 'UTF-8');
+    $email = filter_var($input['email'], FILTER_VALIDATE_EMAIL);
+    $message = htmlspecialchars($input['message'], ENT_QUOTES, 'UTF-8');
 
     if (!$email) {
         throw new Exception("Invalid email format");
