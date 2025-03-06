@@ -1,47 +1,30 @@
-# 📘 PhishingFacebook - Educational Phishing Demonstration
+# FAA Form Backend
 
-![MIT License](https://img.shields.io/badge/License-MIT-green.svg)
+This repository contains the backend implementation for a contact form application. It handles form submissions, validates input, and sends emails using PHPMailer with OAuth2 authentication.
 
-A simulated Facebook phishing page to demonstrate credential harvesting risks. **Use ethically and responsibly.**
+## Features
 
----
+- Receive form submissions via POST requests
+- Validate and sanitize user input
+- Send emails to specified recipients using Gmail SMTP with OAuth2
+- Return JSON responses for success or failure
 
-## ⚠️ Critical Disclaimer
+## Prerequisites
 
-> **WARNING**  
-> This project is **STRICTLY FOR EDUCATIONAL PURPOSES ONLY**. Unauthorized use for malicious activities is illegal. Always obtain explicit permission before testing any system. The developers assume no liability for misuse.
+Before setting up the project, ensure you have:
 
----
+1. PHP 8.0 or higher
+2. Composer installed
+3. Gmail account with API access (Client ID, Client Secret, Refresh Token)
+4. Deployment platform like [Railway](https://railway.app/)
 
-## 🚀 Features
+## Setup Instructions
 
-- 🎭 Realistic Facebook login page clone
-- 📧 Automated credential forwarding via PHPMailer + Gmail API
-- 🔐 OAuth 2.0 secure email transmission
-- 🛠️ Easy deployment with XAMPP/WAMP
-- 📦 Lightweight PHP-based solution
-
----
-
-## 🛠️ Prerequisites
-
-- Web server (XAMPP/WAMP/MAMP)
-- [Composer](https://getcomposer.org/) (PHP dependency manager)
-- Gmail API credentials:
-  - Client ID
-  - Client Secret
-  - Refresh Token
-- Basic PHP/CLI knowledge
-
----
-
-## � Installation Guide
-
-### 1. Clone Repository
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/fatonyahmadfauzi/PhishingFacebook.git
-cd PhishingFacebook
+git clone https://github.com/your-username/faa-form-backend.git
+cd faa-form-backend
 ```
 
 ### 2. Install Dependencies
@@ -50,92 +33,89 @@ cd PhishingFacebook
 composer install
 ```
 
-### 3. Gmail API Setup
+### 3. Configure Environment Variables
 
-- Create project in [Google Cloud Console](https://console.cloud.google.com/ "Klik untuk membuka Google Cloud Console")
-- Enable **Gmail API**
-- Configure OAuth consent screen
-- Create OAuth 2.0 Client ID
-- Get credentials via [OAuth 2.0 Playground](https://developers.google.com/oauthplayground "Generate Refresh Token di sini")
-
-### 4. Configure Script
-
-> Edit **index.php**:
+Create **.env** file:
 
 ```bash
-// OAuth Configuration
-$clientId = 'YOUR_CLIENT_ID';          // ← Replace
-$clientSecret = 'YOUR_CLIENT_SECRET';  // ← Replace
-$refreshToken = 'YOUR_REFRESH_TOKEN';  // ← Replace
-$email = 'your-email@gmail.com';       // ← Your email
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+GOOGLE_REFRESH_TOKEN=your-google-refresh-token
+GMAIL_ACCOUNT=your-gmail-account@gmail.com
+RECIPIENT_EMAIL=recipient-email@example.com
+RECIPIENT_NAME=Recipient Name
 ```
 
-### 5. Deploy
+### 4. Deploy on Railway
 
-- Move folder to server root (e.g., **xampp/htdocs/**)
-- Start Apache/MySQL in XAMPP
-- Access via **http://localhost/PhishingFacebook**
+1. Create new Railway project and connect repository
+2. Add environment variables
+3. Deploy service
 
-## 🌐 File Structure
+### 5. Update Frontend Integration
+
+Update frontend fetch URL:
 
 ```bash
-PhishingFacebook/
-├── index.php               # Main logic
-├── login_desktop.php       # Desktop webview
-├── login_mobile.php        # Mobile webview
-├── login/                  # Redirect pages wrong credentials
-│   └── login_attempt.php
-├── handleForm.php          # Form handler
-├── assets/                 # assets
-│   └── favicon.png
-│   └── meta.svg
-├── vendor/                 # PHPMailer dependencies
-└── README.md               # This documentation
+fetch("https://your-backend-url.up.railway.app/handle-form.php", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(formData),
+});
 ```
 
----
+## API Endpoint
 
-## ⚖️ Ethical Use Cases
+### POST **/handle-form.php**
 
-- ✅ Security awareness training
-- ✅ Penetration testing (with written consent)
-- ✅ Phishing detection workshops
-- ✅ Academic research on social engineering
-  > **Prohibited:**
-- ❌ Unauthorized credential harvesting
-- ❌ Malicious attacks
-- ❌ Privacy violations
-
----
-
-## 🔍 Troubleshooting
-
-| **Issue**            | **Solution**                                |
-| -------------------- | ------------------------------------------- |
-| Emails not sending   | Verify Gmail API credentials & OAuth config |
-| PHPMailer errors     | Check Composer installation & dependencies  |
-| Page styling broken  | Ensure CSS file path & image locations      |
-| OAuth redirect error | Validate authorized redirect URIs in GCP    |
-
----
-
-## 📜 License
-
-> Distributed under MIT License. See [LICENSE](LICENSE) for full text.
-> **Remember:** With great power comes great responsibility. 🕷️
+**Request Body:**
 
 ```bash
-Key improvements made:
-1. Added visual elements with emojis and badges
-2. Created clear warning sections with highlight
-3. Formatted code blocks with syntax highlighting
-4. Added organized tables for troubleshooting
-5. Improved file structure visualization
-6. Created clear ethical/prohibited use sections
-7. Added responsive Markdown formatting
-8. Included license badge
-9. Made prerequisites/installation steps more scannable
-10. Added proper hyperlinks to external resources
+{
+  "name": "John Doe",
+  "email": "johndoe@example.com",
+  "message": "Hello, this is a test message."
+}
 ```
 
----
+**Responses:**
+
+- Success:
+
+```bash
+{ "status": "success", "message": "Message sent successfully!" }
+```
+
+- Error:
+
+```bash
+{ "status": "error", "message": "Error message here." }
+```
+
+## Error Handling
+
+- Errors logged in server logs
+- Disable **display_errors** in production
+
+## Libraries Used
+
+- [PHPMailer](https://github.com/PHPMailer/PHPMailer) - Email handling
+- [League OAuth2 Client](https://github.com/thephpleague/oauth2-client) - OAuth2 integration
+- [vlucas/phpdotenv](https://github.com/vlucas/phpdotenv) - Environment variable management
+
+## Troubleshooting
+
+- **CORS Issues**: Verify CORS headers configuration
+- **OAuth Errors**: Check Google credentials validity
+- **500 Errors**: Review server logs for details
+
+## License
+
+This project is open-source and available under the [MIT License](https://opensource.org/licenses/MIT).
+
+## Acknowledgments
+
+- PHPMailer contributors
+- PHP community support
