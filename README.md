@@ -1,4 +1,4 @@
-# FAA Form Backend with SMTP and Railway
+# FAA Form Backend with Google Cloud Platform and OAuth 0.2 Playground for SMTP on Railway
 
 This repository contains the backend implementation for a contact form application. It handles form submissions, validates input, and sends emails using PHPMailer with OAuth2 authentication.
 
