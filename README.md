@@ -1,4 +1,4 @@
-# Deploying a Node.js Serverless Function for Brevo on Vercel
+# FAA Form Backend with Node.js Serverless Function for Brevo on Vercel
 
 This README provides a guide for converting a PHP backend into a Node.js serverless function to use Brevo's email-sending capabilities on Vercel. Since Vercel does not support PHP, this approach enables you to run the backend logic effectively in a serverless environment.
 
