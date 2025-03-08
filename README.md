@@ -1,4 +1,4 @@
-# FAA Form Backend with Dockerfile and Railway
+# FAA Form Backend with SMTP and Railway
 
 This repository contains the backend implementation for a contact form application. It handles form submissions, validates input, and sends emails using PHPMailer with OAuth2 authentication.
 
