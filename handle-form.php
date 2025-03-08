@@ -18,15 +18,13 @@ require __DIR__ . '/vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-use PHPMailer\PHPMailer\OAuth;
-use League\OAuth2\Client\Provider\Google;
 use Dotenv\Dotenv;
 
 // Load environment variables
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
-// Validate form data
+// Response template
 $response = ['status' => 'error', 'message' => ''];
 
 try {
@@ -55,32 +53,17 @@ try {
 
     // Configure PHPMailer
     $mail = new PHPMailer(true);
-
-    // Server settings
     $mail->isSMTP();
-    $mail->Host = 'smtp.gmail.com';
+    $mail->Host = 'smtp-relay.brevo.com'; // Brevo SMTP host
     $mail->SMTPAuth = true;
-    $mail->AuthType = 'XOAUTH2';
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Username = $_ENV['BREVO_EMAIL']; // Your Brevo email
+    $mail->Password = $_ENV['BREVO_API_KEY']; // Your Brevo API key
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Use TLS
     $mail->Port = 587;
 
-    // OAuth2 Configuration
-    $provider = new Google([
-        'clientId' => $_ENV['GOOGLE_CLIENT_ID'],
-        'clientSecret' => $_ENV['GOOGLE_CLIENT_SECRET']
-    ]);
-
-    $mail->setOAuth(new OAuth([
-        'provider' => $provider,
-        'clientId' => $_ENV['GOOGLE_CLIENT_ID'],
-        'clientSecret' => $_ENV['GOOGLE_CLIENT_SECRET'],
-        'refreshToken' => $_ENV['GOOGLE_REFRESH_TOKEN'],
-        'userName' => $_ENV['GMAIL_ACCOUNT']
-    ]));
-
     // Send to admin
-    $mail->setFrom($_ENV['GMAIL_ACCOUNT'], 'Contact Form');
-    $mail->addAddress($_ENV['RECIPIENT_EMAIL'], $_ENV['RECIPIENT_NAME']);
+    $mail->setFrom($_ENV['BREVO_EMAIL'], 'Contact Form'); // Sender email
+    $mail->addAddress($_ENV['RECIPIENT_EMAIL'], $_ENV['RECIPIENT_NAME']); // Recipient email
     $mail->Subject = 'New Contact Form Submission';
     $mail->isHTML(true);
     $mail->Body = "
@@ -94,7 +77,7 @@ try {
 
     // Send confirmation to user
     $mail->clearAddresses();
-    $mail->addAddress($email, $name);
+    $mail->addAddress($email, $name); // User email
     $mail->Subject = 'Thank You for Contacting Us';
     $mail->Body = "
         <h2>Hi $name,</h2>

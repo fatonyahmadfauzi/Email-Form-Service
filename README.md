@@ -1,121 +1,45 @@
-# FAA Form Backend
+# FAA Form Backend with Brevo API
 
-This repository contains the backend implementation for a contact form application. It handles form submissions, validates input, and sends emails using PHPMailer with OAuth2 authentication.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+A contact form implementation using Brevo (Sendinblue) API. Features a PHP backend hosted on InfinityFree and a HTML/JavaScript frontend deployed on Netlify.
 
 ## Features
 
-- Receive form submissions via POST requests
-- Validate and sanitize user input
-- Send emails to specified recipients using Gmail SMTP with OAuth2
-- Return JSON responses for success or failure
+- 📄 **Frontend**: HTML/JavaScript hosted on Netlify
+- ⚙️ **Backend**: PHP script using Brevo API hosted on InfinityFree
+- 📧 **Email Handling**: Sends emails to recipient + confirmation to user
+- 🔒 **CORS Configuration**: Secure cross-origin communication
 
 ## Prerequisites
 
-Before setting up the project, ensure you have:
+- [Brevo Account](https://www.brevo.com/) (Free tier)
+- [InfinityFree](https://infinityfree.net/) hosting account
+- [Netlify](https://www.netlify.com/) account (or alternative static host)
+- Basic understanding of PHP and JavaScript
 
-1. PHP 8.0 or higher
-2. Composer installed
-3. Gmail account with API access (Client ID, Client Secret, Refresh Token)
-4. Deployment platform like [Railway](https://railway.app/)
+## 🛠 Setup Guide
 
-## Setup Instructions
+### Backend Setup (InfinityFree)
 
-### 1. Clone the Repository
+1. **Create PHP File**  
+   Create `handle-form.php` with this structure:
 
-```bash
-git clone https://github.com/your-username/faa-form-backend.git
-cd faa-form-backend
-```
+   ```php
+   <?php
+   // Manually set environment variables (InfinityFree doesn't support .env)
+   $_ENV['BREVO_API_KEY'] = 'your_brevo_api_key_here';
+   $_ENV['RECIPIENT_EMAIL'] = 'recipient@example.com';
+   $_ENV['RECIPIENT_NAME'] = 'Recipient Name';
 
-### 2. Install Dependencies
+   // Include dependencies
+   require __DIR__ . '/vendor/autoload.php';
 
-```bash
-composer install
-```
+   // Add CORS headers
+   header("Access-Control-Allow-Origin: https://your-netlify-domain.netlify.app");
+   header("Access-Control-Allow-Methods: POST");
+   header("Content-Type: application/json");
 
-### 3. Configure Environment Variables
-
-Create **.env** file:
-
-```bash
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-GOOGLE_REFRESH_TOKEN=your-google-refresh-token
-GMAIL_ACCOUNT=your-gmail-account@gmail.com
-RECIPIENT_EMAIL=recipient-email@example.com
-RECIPIENT_NAME=Recipient Name
-```
-
-### 4. Deploy on Railway
-
-1. Create new Railway project and connect repository
-2. Add environment variables
-3. Deploy service
-
-### 5. Update Frontend Integration
-
-Update frontend fetch URL:
-
-```bash
-fetch("https://your-backend-url.up.railway.app/handle-form.php", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify(formData),
-});
-```
-
-## API Endpoint
-
-### POST **/handle-form.php**
-
-**Request Body:**
-
-```bash
-{
-  "name": "John Doe",
-  "email": "johndoe@example.com",
-  "message": "Hello, this is a test message."
-}
-```
-
-**Responses:**
-
-- Success:
-
-```bash
-{ "status": "success", "message": "Message sent successfully!" }
-```
-
-- Error:
-
-```bash
-{ "status": "error", "message": "Error message here." }
-```
-
-## Error Handling
-
-- Errors logged in server logs
-- Disable **display_errors** in production
-
-## Libraries Used
-
-- [PHPMailer](https://github.com/PHPMailer/PHPMailer) - Email handling
-- [League OAuth2 Client](https://github.com/thephpleague/oauth2-client) - OAuth2 integration
-- [vlucas/phpdotenv](https://github.com/vlucas/phpdotenv) - Environment variable management
-
-## Troubleshooting
-
-- **CORS Issues**: Verify CORS headers configuration
-- **OAuth Errors**: Check Google credentials validity
-- **500 Errors**: Review server logs for details
-
-## License
-
-This project is open-source and available under the [MIT License](https://opensource.org/licenses/MIT).
-
-## Acknowledgments
-
-- PHPMailer contributors
-- PHP community support
+   // [Add your email sending logic here]
+   ?>
+   ```
