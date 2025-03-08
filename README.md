@@ -7,20 +7,20 @@ A contact form implementation using Brevo (Sendinblue) API. Features a PHP backe
 ## Features
 
 - 📄 **Frontend**: HTML/JavaScript hosted on Netlify
-- ⚙️ **Backend**: PHP script using Brevo API hosted on InfinityFree
+- ⚙️ **Backend**: PHP script using Brevo API hosted on Render
 - 📧 **Email Handling**: Sends emails to recipient + confirmation to user
 - 🔒 **CORS Configuration**: Secure cross-origin communication
 
 ## Prerequisites
 
 - [Brevo Account](https://www.brevo.com/) (Free tier)
-- [InfinityFree](https://infinityfree.net/) hosting account
+- [Render](https://dashboard.render.com/) hosting account
 - [Netlify](https://www.netlify.com/) account (or alternative static host)
 - Basic understanding of PHP and JavaScript
 
 ## 🛠 Setup Guide
 
-### Backend Setup (InfinityFree)
+### Backend Setup (Render)
 
 1. **Create PHP File**  
    Create `handle-form.php` with this structure:
@@ -52,7 +52,7 @@ A contact form implementation using Brevo (Sendinblue) API. Features a PHP backe
    ```
 
 3. **Upload Files**
-   Deploy these to InfinityFree:
+   Deploy these to Render:
    - `handle-form.php`
    - `vendor/` folder
    - Other required PHP files
@@ -86,7 +86,7 @@ A contact form implementation using Brevo (Sendinblue) API. Features a PHP backe
 
        try {
          const response = await fetch(
-           "https://your-infinityfree-domain.infinityfreeapp.com/handle-form.php",
+           "https://faa-form-backend.onrender.com/handle-form.php",
            {
              method: "POST",
              headers: { "Content-Type": "application/json" },
@@ -132,7 +132,7 @@ A contact form implementation using Brevo (Sendinblue) API. Features a PHP backe
 
 ## ⚠️ Important Notes
 
-- **InfinityFree Limitations**:
+- **Render Limitations**:
   API-based emails only (no SMTP support)
 - **Brevo Limits**:
   Free plan allows 300 emails/day
