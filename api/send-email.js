@@ -1,82 +1,55 @@
-const fetch = require("node-fetch");
+import fetch from 'node-fetch'; // Gunakan import karena node-fetch mendukung ESM
+import dotenv from 'dotenv';
 
-// Load environment variables
-require("dotenv").config();
+dotenv.config();
 
 export default async function handler(req, res) {
-  // CORS configuration
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader('Access-Control-Allow-Origin', 'https://fatonyahmadfauzi.netlify.app'); // Izinkan frontend Anda
+  res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === "OPTIONS") {
-    return res.status(200).end(); // Handle CORS preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end(); // Respon untuk preflight request
   }
 
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method not allowed' });
+  }
+
+  const { name, email, message } = req.body;
+
+  if (!name || !email || !message) {
+    return res.status(400).json({ message: 'All fields are required' });
   }
 
   try {
-    const { name, email, message } = req.body;
-
-    // Input validation
-    if (!name || !email || !message) {
-      throw new Error("All fields are required");
-    }
-
-    // Send email to admin using Brevo API
-    const brevoResponse = await fetch("https://api.brevo.com/v3/smtp/email", {
-      method: "POST",
+    // Konfigurasi untuk Brevo API (gunakan email Brevo Anda)
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        "api-key": process.env.BREVO_API_KEY,
+        'Content-Type': 'application/json',
+        'api-key': process.env.BREVO_API_KEY,
       },
       body: JSON.stringify({
-        sender: { name: "Contact Form", email: process.env.BREVO_EMAIL },
-        to: [{ email: process.env.RECIPIENT_EMAIL, name: process.env.RECIPIENT_NAME }],
-        subject: "New Contact Form Submission",
+        sender: { email: process.env.BREVO_EMAIL },
+        to: [{ email }],
+        subject: 'Thank you for contacting us!',
         htmlContent: `
-          <h3>New Message From ${name}</h3>
-          <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Message:</strong></p>
-          <p>${message}</p>
-        `,
-      }),
-    });
-
-    if (!brevoResponse.ok) {
-      throw new Error("Failed to send email to admin");
-    }
-
-    // Send confirmation email to user
-    const userResponse = await fetch("https://api.brevo.com/v3/smtp/email", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "api-key": process.env.BREVO_API_KEY,
-      },
-      body: JSON.stringify({
-        sender: { name: process.env.RECIPIENT_NAME, email: process.env.BREVO_EMAIL },
-        to: [{ email, name }],
-        subject: "Thank You for Contacting Us",
-        htmlContent: `
-          <h2>Hi ${name},</h2>
+          <h3>Hi ${name},</h3>
           <p>We've received your message:</p>
           <blockquote>${message}</blockquote>
-          <p>We'll respond within 24 hours.</p>
-          <p>Best regards,<br>${process.env.RECIPIENT_NAME}</p>
+          <p>We'll respond shortly.</p>
         `,
       }),
     });
 
-    if (!userResponse.ok) {
-      throw new Error("Failed to send confirmation email to user");
+    if (!response.ok) {
+      throw new Error('Failed to send email');
     }
 
-    res.status(200).json({ status: "success", message: "Message sent successfully!" });
+    return res.status(200).json({ status: 'success', message: 'Email sent successfully!' });
   } catch (error) {
-    console.error("Email Error:", error.message);
-    res.status(500).json({ status: "error", message: error.message });
+    console.error(error);
+    return res.status(500).json({ status: 'error', message: 'Internal server error' });
   }
 }
