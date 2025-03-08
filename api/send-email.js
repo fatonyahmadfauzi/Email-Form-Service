@@ -31,9 +31,11 @@ export default async function handler(req, res) {
       },
     });
 
+    const recipientName = process.env.RECIPIENT_NAME || "Recipient"; // Default to "Recipient" if not set
+
     // Kirim email ke pengguna
     await transporter.sendMail({
-      from: `"Your Company" <${process.env.GMAIL_EMAIL}>`,
+      from: `"${recipientName}" <${process.env.GMAIL_EMAIL}>`,
       to: email,
       subject: 'Thank you for contacting us!',
       html: `
@@ -46,7 +48,7 @@ export default async function handler(req, res) {
 
     // Kirim email ke admin
     await transporter.sendMail({
-      from: `"Your Company" <${process.env.GMAIL_EMAIL}>`,
+      from: `"${recipientName}" <${process.env.GMAIL_EMAIL}>`,
       to: process.env.RECIPIENT_EMAIL,
       subject: 'New Contact Form Submission',
       html: `
