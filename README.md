@@ -1,4 +1,4 @@
-# FAA Form Backend with Node js for Email Backend Service on Vercel
+# FAA Form Backend with Node js Serverless Function for Email Backend Service on Vercel
 
 This project is a backend service for handling email sending functionality using [Nodemailer](https://nodemailer.com/) and environment variables for secure configuration. It is designed to work seamlessly with Brevo or Gmail SMTP configurations. The service can be deployed on [Vercel](https://vercel.com).
 
