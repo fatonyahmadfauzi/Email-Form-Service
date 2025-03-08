@@ -24,18 +24,16 @@ export default async function handler(req, res) {
 
   try {
     const transporter = nodemailer.createTransport({
-      host: process.env.BREVO_SMTP_HOST,
-      port: parseInt(process.env.BREVO_SMTP_PORT, 10),
-      secure: false, // true for port 465, false for other ports
+      service: 'Gmail',
       auth: {
-        user: process.env.BREVO_EMAIL, // login email
-        pass: process.env.BREVO_PASSWORD, // password SMTP
+        user: process.env.GMAIL_EMAIL, // Gmail email
+        pass: process.env.GMAIL_APP_PASSWORD, // App Password Gmail
       },
     });
 
-    // Kirim ke pengguna
+    // Kirim email ke pengguna
     await transporter.sendMail({
-      from: `"Your Company" <${process.env.BREVO_EMAIL}>`,
+      from: `"Your Company" <${process.env.GMAIL_EMAIL}>`,
       to: email,
       subject: 'Thank you for contacting us!',
       html: `
@@ -46,9 +44,9 @@ export default async function handler(req, res) {
       `,
     });
 
-    // Kirim ke admin
+    // Kirim email ke admin
     await transporter.sendMail({
-      from: `"Your Company" <${process.env.BREVO_EMAIL}>`,
+      from: `"Your Company" <${process.env.GMAIL_EMAIL}>`,
       to: process.env.RECIPIENT_EMAIL,
       subject: 'New Contact Form Submission',
       html: `
