@@ -23,8 +23,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Konfigurasi untuk Brevo API (gunakan email Brevo Anda)
-    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+    // Kirim email ke pengirim (user)
+    const userResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         sender: { email: process.env.BREVO_EMAIL },
-        to: [{ email }],
+        to: [{ email }], // Kirim ke email pengirim
         subject: 'Thank you for contacting us!',
         htmlContent: `
           <h3>Hi ${name},</h3>
@@ -43,11 +43,40 @@ export default async function handler(req, res) {
       }),
     });
 
-    if (!response.ok) {
-      throw new Error('Failed to send email');
+    if (!userResponse.ok) {
+      throw new Error('Failed to send email to user');
     }
 
-    return res.status(200).json({ status: 'success', message: 'Email sent successfully!' });
+    // Kirim email ke admin
+    const adminResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'api-key': process.env.BREVO_API_KEY,
+      },
+      body: JSON.stringify({
+        sender: { email: process.env.BREVO_EMAIL },
+        to: [
+          {
+            email: process.env.RECIPIENT_EMAIL,
+            name: process.env.RECIPIENT_NAME,
+          },
+        ], // Kirim ke admin
+        subject: 'New Contact Form Submission',
+        htmlContent: `
+          <h3>New Message From ${name}</h3>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Message:</strong></p>
+          <p>${message}</p>
+        `,
+      }),
+    });
+
+    if (!adminResponse.ok) {
+      throw new Error('Failed to send email to admin');
+    }
+
+    return res.status(200).json({ status: 'success', message: 'Emails sent successfully!' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ status: 'error', message: 'Internal server error' });
