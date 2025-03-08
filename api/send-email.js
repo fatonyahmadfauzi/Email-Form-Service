@@ -31,7 +31,7 @@ export default async function handler(req, res) {
         'api-key': process.env.BREVO_API_KEY,
       },
       body: JSON.stringify({
-        sender: { email: process.env.BREVO_EMAIL },
+        sender: { name: "Fatony Contact Form", email: process.env.BREVO_EMAIL },
         to: [{ email }], // Kirim ke email pengirim
         subject: 'Thank you for contacting us!',
         htmlContent: `
@@ -55,7 +55,7 @@ export default async function handler(req, res) {
         'api-key': process.env.BREVO_API_KEY,
       },
       body: JSON.stringify({
-        sender: { email: process.env.BREVO_EMAIL },
+        sender: { name: "Fatony Contact Form", email: process.env.BREVO_EMAIL },
         to: [
           {
             email: process.env.RECIPIENT_EMAIL,
