@@ -35,9 +35,9 @@ composer install
 
 ### 3. Configure Environment Variables
 
-Create **.env** file:
+Create `.env` file:
 
-```bash
+```env
 GOOGLE_CLIENT_ID=your-google-client-id
 GOOGLE_CLIENT_SECRET=your-google-client-secret
 GOOGLE_REFRESH_TOKEN=your-google-refresh-token
@@ -56,7 +56,7 @@ RECIPIENT_NAME=Recipient Name
 
 Update frontend fetch URL:
 
-```bash
+```javascript
 fetch("https://your-backend-url.up.railway.app/handle-form.php", {
   method: "POST",
   headers: {
@@ -68,11 +68,11 @@ fetch("https://your-backend-url.up.railway.app/handle-form.php", {
 
 ## API Endpoint
 
-### POST **/handle-form.php**
+### POST `/handle-form.php`
 
 **Request Body:**
 
-```bash
+```json
 {
   "name": "John Doe",
   "email": "johndoe@example.com",
@@ -84,20 +84,20 @@ fetch("https://your-backend-url.up.railway.app/handle-form.php", {
 
 - Success:
 
-```bash
+```json
 { "status": "success", "message": "Message sent successfully!" }
 ```
 
 - Error:
 
-```bash
+```json
 { "status": "error", "message": "Error message here." }
 ```
 
 ## Error Handling
 
 - Errors logged in server logs
-- Disable **display_errors** in production
+- Disable `display_errors` in production
 
 ## Libraries Used
 
