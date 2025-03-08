@@ -20,6 +20,7 @@
   "homepage": "https://github.com/fatonyahmadfauzi/faa-form-backend#readme",
   "dependencies": {
     "dotenv": "^16.4.7",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "sib-api-v3-sdk": "^8.5.0"
   }
 }
