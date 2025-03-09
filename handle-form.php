@@ -79,7 +79,7 @@ try {
     ]));
 
     // Send to admin
-    $mail->setFrom($_ENV['GMAIL_ACCOUNT'], 'Contact Form');
+    $mail->setFrom($_ENV['GMAIL_ACCOUNT'], '[FAA] Contact Form');
     $mail->addAddress($_ENV['RECIPIENT_EMAIL'], $_ENV['RECIPIENT_NAME']);
     $mail->Subject = 'New Contact Form Submission!';
     $mail->isHTML(true);
