@@ -33,22 +33,9 @@ export default async function handler(req, res) {
 
     const recipientName = process.env.RECIPIENT_NAME || "Recipient"; // Default to "Recipient" if not set
 
-    // Kirim email ke pengguna
-    await transporter.sendMail({
-      from: `"${recipientName}" <${process.env.GMAIL_EMAIL}>`,
-      to: email,
-      subject: 'Thank you for contacting us!',
-      html: `
-        <h3>Hi ${name},</h3>
-        <p>We've received your message:</p>
-        <blockquote>${message}</blockquote>
-        <p>We'll respond shortly.</p>
-      `,
-    });
-
     // Kirim email ke admin
     await transporter.sendMail({
-      from: `"${recipientName}" <${process.env.GMAIL_EMAIL}>`,
+      from: `"[FAA] Contact Form" <${process.env.GMAIL_EMAIL}>`, // Disamakan dengan PHP
       to: process.env.RECIPIENT_EMAIL,
       subject: 'New Contact Form Submission',
       html: `
@@ -56,6 +43,20 @@ export default async function handler(req, res) {
         <p><strong>Email:</strong> ${email}</p>
         <p><strong>Message:</strong></p>
         <p>${message}</p>
+      `,
+    });
+
+    // Kirim email konfirmasi ke pengguna
+    await transporter.sendMail({
+      from: `"${recipientName}" <${process.env.GMAIL_EMAIL}>`,
+      to: email,
+      subject: 'Thank You for Contacting Us!',
+      html: `
+        <h2>Hi ${name},</h2>
+        <p>We've received your message:</p>
+        <blockquote>${message}</blockquote>
+        <p>We'll respond within 24 hours.</p>
+        <p>Best regards,<br>${recipientName}</p>
       `,
     });
 
