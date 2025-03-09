@@ -1,29 +1,31 @@
 # FAA Form Backend with Node js Serverless Function for Email Backend Service on Vercel
 
-This project is a serverless function for handling contact form submissions and sending emails using Gmail's SMTP service. It is designed to send a confirmation email to the user and notify the admin about new submissions.
+This repository contains a serverless function for sending emails using Nodemailer and Gmail. The function handles both user and admin email notifications, ensuring a smooth experience for contact form submissions.
 
 ## Features
 
-- Sends a confirmation email to the user.
-- Notifies the admin with the user's message.
-- Handles CORS for requests from specific origins.
-- Uses environment variables for configuration.
+- Send email notifications to users who submit the contact form.
+- Send email notifications to the admin with details of the form submission.
+- Fully customizable email content.
+- Environment variable support for secure and flexible configuration.
 
 ## Prerequisites
 
-1. Create a Gmail account (or use an existing one).
-2. Generate an **App Password** for your Gmail account:
-   - Go to [Google Account Security](https://myaccount.google.com/security).
-   - Enable **2-Step Verification**.
-   - Generate an **App Password** for "Mail" and "Other" app.
+- Node.js installed on your local machine.
+- A Gmail account with an App Password configured.
+- The following environment variables set up:
+  - `GMAIL_EMAIL`: Your Gmail address.
+  - `GMAIL_APP_PASSWORD`: Your Gmail App Password.
+  - `RECIPIENT_EMAIL`: The admin's email address where notifications will be sent.
+  - `RECIPIENT_NAME`: The name of the admin or recipient.
 
 ## Installation
 
 1. Clone the repository:
 
    ```bash
-   git clone <repository-url>
-   cd <repository-folder>
+   git clone https://github.com/your-repo/serverless-email.git
+   cd serverless-email
    ```
 
 2. Install dependencies:
@@ -32,135 +34,92 @@ This project is a serverless function for handling contact form submissions and 
    npm install
    ```
 
-3. Create a `.env` file in the root directory and add the following variables:
-
+3. Create a `.env` file in the root directory and add the following environment variables:
    ```env
-   RECIPIENT_NAME=Your Recipient Name Here
    GMAIL_EMAIL=your-email@gmail.com
    GMAIL_APP_PASSWORD=your-app-password
-   RECIPIENT_EMAIL=recipient-admin-email@gmail.com
+   RECIPIENT_EMAIL=admin-email@example.com
+   RECIPIENT_NAME=Admin Name
    ```
-
-4. Deploy the function to a serverless platform (e.g., Vercel, Netlify, etc.).
 
 ## Usage
 
-1. Make a POST request to the deployed endpoint with the following JSON payload:
+### Endpoint
 
-   ```json
-   {
-     "name": "User's Name",
-     "email": "user@example.com",
-     "message": "The user's message."
-   }
-   ```
+The function exposes a POST endpoint where you can send contact form submissions.
 
-2. Example cURL request:
-   ```bash
-   curl -X POST https://your-deployment-url/api/send-email \
-   -H "Content-Type: application/json" \
-   -d '{"name": "John Doe", "email": "john.doe@example.com", "message": "Hello!"}'
-   ```
+### Request Payload
 
-## Code Explanation
+The payload should be in JSON format with the following fields:
 
-The serverless function is defined in `send-email.js`:
-
-```javascript
-import nodemailer from "nodemailer";
-import dotenv from "dotenv";
-
-dotenv.config();
-
-export default async function handler(req, res) {
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    "https://fatonyahmadfauzi.netlify.app"
-  );
-  res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
-  if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method not allowed" });
-  }
-
-  const { name, email, message } = req.body;
-
-  if (!name || !email || !message) {
-    return res.status(400).json({ message: "All fields are required" });
-  }
-
-  try {
-    const transporter = nodemailer.createTransport({
-      service: "Gmail",
-      auth: {
-        user: process.env.GMAIL_EMAIL, // Gmail email
-        pass: process.env.GMAIL_APP_PASSWORD, // App Password Gmail
-      },
-    });
-
-    const recipientName = process.env.RECIPIENT_NAME || "Recipient"; // Default to "Recipient" if not set
-
-    // Kirim email ke pengguna
-    await transporter.sendMail({
-      from: `"${recipientName}" <${process.env.GMAIL_EMAIL}>`,
-      to: email,
-      subject: "Thank you for contacting us!",
-      html: `
-        <h3>Hi ${name},</h3>
-        <p>We've received your message:</p>
-        <blockquote>${message}</blockquote>
-        <p>We'll respond shortly.</p>
-      `,
-    });
-
-    // Kirim email ke admin
-    await transporter.sendMail({
-      from: `"${recipientName}" <${process.env.GMAIL_EMAIL}>`,
-      to: process.env.RECIPIENT_EMAIL,
-      subject: "New Contact Form Submission",
-      html: `
-        <h3>New Message From ${name}</h3>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Message:</strong></p>
-        <p>${message}</p>
-      `,
-    });
-
-    return res
-      .status(200)
-      .json({ status: "success", message: "Emails sent successfully!" });
-  } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .json({ status: "error", message: "Internal server error" });
-  }
+```json
+{
+  "name": "Your Name",
+  "email": "your-email@example.com",
+  "message": "Your message here."
 }
 ```
 
-## Deployment
+### Response
 
-### Vercel
+The server will respond with:
 
-1. Deploy the repository to Vercel.
-2. Add the environment variables in the Vercel dashboard under "Settings > Environment Variables".
+- `200 OK` if the emails were sent successfully.
+- `400 Bad Request` if any required fields are missing.
+- `500 Internal Server Error` if an error occurs while sending emails.
 
-### Netlify
+## Email Content
 
-1. Deploy the repository to Netlify.
-2. Add the environment variables in the Netlify dashboard under "Site settings > Environment Variables".
+### Email to Admin
 
-## Testing
+The admin will receive an email with the following content:
 
-Use a tool like Postman or cURL to send a POST request to your deployed function and verify the email sending functionality.
+- Subject: **New Contact Form Submission!**
+- Body:
+  ```html
+  <h3>New Message From {name}</h3>
+  <p><strong>Email:</strong> {email}</p>
+  <p><strong>Message:</strong></p>
+  <p>{message}</p>
+  ```
 
-## Troubleshooting
+### Email to User
 
-- Ensure the **App Password** is correctly set up and matches the Gmail account.
-- Verify that the recipient email is valid.
-- Check server logs for errors if emails are not sent.
+The user will receive a confirmation email with the following content:
+
+- Subject: **Thank You for Contacting Us!**
+- Body:
+  ```html
+  <h2>Hi {name},</h2>
+  <p>We've received your message:</p>
+  <blockquote>{message}</blockquote>
+  <p>We'll respond within 24 hours.</p>
+  <p>Best regards,<br />{RECIPIENT_NAME}</p>
+  ```
+
+## Deploying the Function
+
+You can deploy this function to platforms like Vercel or Netlify that support serverless functions.
+
+### Example Deployment on Vercel
+
+1. Install the Vercel CLI:
+
+   ```bash
+   npm install -g vercel
+   ```
+
+2. Deploy the function:
+
+   ```bash
+   vercel
+   ```
+
+3. Set the environment variables on Vercel:
+   ```bash
+   vercel env add
+   ```
+
+## License
+
+This project is licensed under the MIT License.
