@@ -81,7 +81,7 @@ try {
     // Send to admin
     $mail->setFrom($_ENV['GMAIL_ACCOUNT'], 'Contact Form');
     $mail->addAddress($_ENV['RECIPIENT_EMAIL'], $_ENV['RECIPIENT_NAME']);
-    $mail->Subject = 'New Contact Form Submission';
+    $mail->Subject = 'New Contact Form Submission!';
     $mail->isHTML(true);
     $mail->Body = "
         <h3>New Message From $name</h3>
@@ -95,7 +95,7 @@ try {
     // Send confirmation to user
     $mail->clearAddresses();
     $mail->addAddress($email, $name);
-    $mail->Subject = 'Thank You for Contacting Us';
+    $mail->Subject = 'Thank You for Contacting Us!';
     $mail->Body = "
         <h2>Hi $name,</h2>
         <p>We've received your message:</p>
