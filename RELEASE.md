@@ -1,35 +1,30 @@
-# 🚀 FAA Form Backend - Vercel Setup
+## FAA Form Backend - Vercel Setup
 
 This release includes the implementation of the serverless email-sending function built with **Node.js** and **Nodemailer**, allowing users to send emails via a contact form. It also includes robust error handling and environment variable configuration.
 
-## 🎉 Features:
+### Features:
 
-### 1. **User Email Confirmation**
+1. **User Email Confirmation**
+   Sends a confirmation email to the user who submitted the contact form, including their name and message.
 
-Sends a confirmation email to the user who submitted the contact form, including their name and message.
+2. **Admin Notification**
+   Sends a notification email to the admin with details of the user's submission.
 
-### 2. **Admin Notification**
+3. **Environment Variables**
+   Sensitive data (e.g., Gmail credentials) is securely managed using `.env` files:
 
-Sends a notification email to the admin with details of the user's submission.
+   - `GMAIL_EMAIL`: Gmail account used to send emails.
+   - `GMAIL_APP_PASSWORD`: App password for Gmail.
+   - `RECIPIENT_EMAIL`: Admin email to receive notifications.
+   - `RECIPIENT_NAME`: Admin name to appear in emails.
 
-### 3. **Environment Variables**
+4. **CORS Configuration**
+   Configured to allow cross-origin requests from the specific client (`https://fatonyahmadfauzi.netlify.app`).
 
-Sensitive data (e.g., Gmail credentials) is securely managed using `.env` files:
+5. **Input Validation**
+   Ensures all required fields (`name`, `email`, `message`) are provided before sending emails.
 
-- `GMAIL_EMAIL`: Gmail account used to send emails.
-- `GMAIL_APP_PASSWORD`: App password for Gmail.
-- `RECIPIENT_EMAIL`: Admin email to receive notifications.
-- `RECIPIENT_NAME`: Admin name to appear in emails.
-
-### 4. **CORS Configuration**
-
-Configured to allow cross-origin requests from the specific client (`https://fatonyahmadfauzi.netlify.app`).
-
-### 5. **Input Validation**
-
-Ensures all required fields (`name`, `email`, `message`) are provided before sending emails.
-
-## 📜 Code Highlights:
+### Code Highlights:
 
 - **Serverless Function**: Built using `nodemailer`.
 - **Secure Credentials**: Managed with environment variables.
