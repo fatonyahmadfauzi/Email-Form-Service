@@ -37,7 +37,7 @@ export default async function handler(req, res) {
     await transporter.sendMail({
       from: `"[FAA] Contact Form" <${process.env.GMAIL_EMAIL}>`, // Disamakan dengan PHP
       to: process.env.RECIPIENT_EMAIL,
-      subject: 'New Contact Form Submission',
+      subject: 'New Contact Form Submission!',
       html: `
         <h3>New Message From ${name}</h3>
         <p><strong>Email:</strong> ${email}</p>
@@ -48,7 +48,7 @@ export default async function handler(req, res) {
 
     // Kirim email konfirmasi ke pengguna
     await transporter.sendMail({
-      from: `"${recipientName}" <${process.env.GMAIL_EMAIL}>`,
+      from: `"[FAA] Contact Form" <${process.env.GMAIL_EMAIL}>`, // Disamakan dengan PHP
       to: email,
       subject: 'Thank You for Contacting Us!',
       html: `
