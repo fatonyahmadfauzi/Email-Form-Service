@@ -56,6 +56,10 @@ try {
     // Configure PHPMailer
     $mail = new PHPMailer(true);
 
+    // Debugging
+    $mail->SMTPDebug = 2; // 2 = client + server messages
+    $mail->Debugoutput = 'error_log';
+
     // Server settings
     $mail->isSMTP();
     $mail->Host = 'smtp.gmail.com';
@@ -111,8 +115,12 @@ try {
         'message' => 'Message sent successfully!'
     ];
 } catch (Exception $e) {
+    http_response_code(500);
+    header('Content-Type: application/json');
     error_log('Email Error: ' . $e->getMessage());
     $response['message'] = 'Error: ' . $e->getMessage();
+    echo json_encode($response);
+    exit;
 }
 
 echo json_encode($response);
