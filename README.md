@@ -1,4 +1,4 @@
-# FAA Form Backend with Google Cloud Platform and OAuth 0.2 Playground for SMTP on Railway
+# Form Backend with Google Cloud Platform and OAuth 0.2 Playground for SMTP on Railway
 
 This repository contains the backend implementation for a contact form application. It handles form submissions, validates input, and sends emails using PHPMailer with OAuth2 authentication.
 
@@ -23,8 +23,9 @@ Before setting up the project, ensure you have:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/faa-form-backend.git
-cd faa-form-backend
+git clone -b smtp-setup https://github.com/fatonyahmadfauzi/Email-Form-Service.git Email-Form-Service_SMTP-Railway
+
+cd Email-Form-Service_SMTP-Railway
 ```
 
 ### 2. Install Dependencies
