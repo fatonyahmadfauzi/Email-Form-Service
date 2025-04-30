@@ -1,6 +1,6 @@
-## FAA Form Backend - Railway Setup
+## Email Form Service - Railway Setup
 
-This release is the **Railway-ready version** of the FAA Form Backend. It contains the necessary configurations and instructions for deploying this project on Railway.
+This release is the **Railway-ready version** of the Email Form Service. It contains the necessary configurations and instructions for deploying this project on Railway.
 
 ### Features
 
@@ -14,8 +14,8 @@ This release is the **Railway-ready version** of the FAA Form Backend. It contai
 
    - Switch to the `railway-setup` branch:
      ```bash
-     git clone https://github.com/your-username/faa-form-backend.git
-     cd faa-form-backend
+     git clone -b smtp-setup https://github.com/fatonyahmadfauzi/Email-Form-Service.git Email-Form-Service_SMTP-Railway
+     cd Email-Form-Service_SMTP-Railway
      git checkout railway-setup
      ```
 
