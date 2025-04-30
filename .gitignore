@@ -1,5 +1,5 @@
 # Ignore environment configuration
-.env
+Import.env
 
 # Ignore temporary files and logs
 *.log
