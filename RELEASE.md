@@ -1,4 +1,4 @@
-## FAA Form Backend - Vercel Setup
+## Email Form Service - Vercel Setup
 
 This release includes the implementation of the serverless email-sending function built with **Node.js** and **Nodemailer**, allowing users to send emails via a contact form. It also includes robust error handling and environment variable configuration.
 
@@ -11,7 +11,7 @@ This release includes the implementation of the serverless email-sending functio
    Sends a notification email to the admin with details of the user's submission.
 
 3. **Environment Variables**
-   Sensitive data (e.g., Gmail credentials) is securely managed using `.env` files:
+   Sensitive data (e.g., Gmail credentials) is securely managed using `Import.env` files:
 
    - `GMAIL_EMAIL`: Gmail account used to send emails.
    - `GMAIL_APP_PASSWORD`: App password for Gmail.

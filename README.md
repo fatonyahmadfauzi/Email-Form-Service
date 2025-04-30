@@ -1,4 +1,4 @@
-# FAA Form Backend with Node js Serverless Function for Email Backend Service on Vercel
+# Email Form Service with Node js Serverless Function on Vercel
 
 This repository contains a serverless function for sending emails using Nodemailer and Gmail. The function handles both user and admin email notifications, ensuring a smooth experience for contact form submissions.
 
@@ -24,8 +24,9 @@ This repository contains a serverless function for sending emails using Nodemail
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-repo/serverless-email.git
-   cd serverless-email
+   git clone -b gmail-setup https://github.com/fatonyahmadfauzi/Email-Form-Service.git Email-Form-Service_Gmail-Vercel
+
+   cd Email-Form-Service_Gmail-Vercel
    ```
 
 2. Install dependencies:
@@ -34,7 +35,7 @@ This repository contains a serverless function for sending emails using Nodemail
    npm install
    ```
 
-3. Create a `.env` file in the root directory and add the following environment variables:
+3. Create a `Import.env` file in the root directory and add the following environment variables:
    ```env
    GMAIL_EMAIL=your-email@gmail.com
    GMAIL_APP_PASSWORD=your-app-password
