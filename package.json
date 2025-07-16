@@ -1,0 +1,9 @@
+{
+  "name": "email-form-api",
+  "version": "1.0.0",
+  "main": "api/handle-form.js",
+  "type": "module",
+  "dependencies": {
+    "nodemailer": "^6.9.8"
+  }
+}
