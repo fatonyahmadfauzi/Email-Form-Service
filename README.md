@@ -23,7 +23,7 @@ Before setting up the project, ensure you have:
 ### 1. Clone the Repository
 
 ```bash
-git clone -b smtp-setup https://github.com/fatonyahmadfauzi/Email-Form-Service.git Email-Form-Service_SMTP-Railway
+git clone -b smtp-railway https://github.com/fatonyahmadfauzi/Email-Form-Service.git Email-Form-Service_SMTP-Railway
 
 cd Email-Form-Service_SMTP-Railway
 ```
