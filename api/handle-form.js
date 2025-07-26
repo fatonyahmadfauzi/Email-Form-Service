@@ -1,15 +1,24 @@
 import nodemailer from 'nodemailer';
 
 export default async function handler(req, res) {
-  // Izinkan permintaan dari domain frontend Anda
-  res.setHeader('Access-Control-Allow-Origin', 'https://fatonyahmadfauzi.me, https://fatonyahmadfauzi.netlify.app');
+  // --- MULAI PERBAIKAN KODE CORS ---
+  const allowedOrigins = ['https://fatonyahmadfauzi.me', 'https://fatonyahmadfauzi.netlify.app'];
+  const origin = req.headers.origin;
+
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  
+  // Izinkan metode request yang diperlukan
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  // Izinkan header yang diperlukan
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // Tangani permintaan preflight OPTIONS
+  // Tangani permintaan preflight OPTIONS dari peramban
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
+  // --- SELESAI PERBAIKAN KODE CORS ---
 
   if (req.method !== 'POST') {
     return res.status(405).json({ status: 'error', message: 'Method Not Allowed' });
@@ -42,7 +51,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ status: 'success', message: 'Message sent successfully!' });
   } catch (error) {
-    console.error(error);
+    console.error(error); // Tambahkan ini untuk debugging di log Vercel
     return res.status(500).json({ status: 'error', message: 'Failed to send message', error: error.message });
   }
 }
